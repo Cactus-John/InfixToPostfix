@@ -5,7 +5,10 @@
 
 using namespace std;
 
-int priority(char c) {
+int priority(char c) 
+{
+	if (c == '^')
+		return 3;
 	if (c == '*' || c == '/')
 		return 2;
 	if (c == '+' || c == '-')
@@ -13,14 +16,19 @@ int priority(char c) {
 	return 0;
 }
 
-string infixToPostfix(string infix) {
+string infixToPostfix(string infix) 
+{
 	stack<char> operations;
 	string postfix = "";
 	for (int i = 0; i < infix.length(); i++)
 	{
 		char c = infix[i];
 		if (isdigit(c))
+		{
 			postfix += c;
+			if (isdigit(c) != isdigit(infix[i + 1]))
+				postfix += ' ';
+		}
 		else if (c == '(')
 			operations.push(c);
 		else if (c == ')')
@@ -54,11 +62,16 @@ string infixToPostfix(string infix) {
 int postfixEvaluation(string postfix)
 {
 	stack<int> num;
-	for (int i = 0; i < postfix.length(); i++)
+	for (int i = 0; i < postfix.length();)
 	{
-		if (isdigit(postfix[i]))
+		char c = postfix[i];
+		if (isdigit(c))
 		{
-			num.push(postfix[i] - '0');
+			num.push(c - '0');
+			++i;
+		}
+		else if (c == ' ') {
+			++i;
 		}
 		else
 		{
@@ -83,6 +96,7 @@ int postfixEvaluation(string postfix)
 			default:
 				return num.top();
 			}
+			++i;
 		}
 	}
 	return num.top();
